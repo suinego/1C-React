@@ -1,90 +1,77 @@
 import React, { useEffect, useState } from "react";
-import Card from "./components/Card";
+import Card from "./components/Card/Card";
 import { mockApi } from "./api/mockApi";
-import "./App.css";
 
-function App() {
+import styles from "./App.module.scss";
+import classNames from "classnames/bind";
+const cx = classNames.bind(styles);
+
+export default function App() {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const [newTitle, setNewTitle] = useState("");
-  const [newText, setNewText] = useState("");
-  const [adding, setAdding] = useState(false);
+  const [loadingArticles, setLoadingArticles] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     mockApi.fetchArticles().then((data) => {
+      if (!mounted) return;
       setArticles(data);
-      setLoading(false);
+      setLoadingArticles(false);
     });
+    return () => (mounted = false);
   }, []);
 
-  const addArticle = async (e) => {
+  const handleAddComment = (articleId) => {
+    setArticles((prev) => prev.map((a) => (a.articleId === articleId ? { ...a, commentsCount: a.commentsCount + 1 } : a)));
+  };
+
+  const handleDeleteComment = (articleId) => {
+    setArticles((prev) => prev.map((a) => (a.articleId === articleId ? { ...a, commentsCount: Math.max(0, a.commentsCount - 1) } : a)));
+  };
+
+  const [addingArticle, setAddingArticle] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newText, setNewText] = useState("");
+
+  const handleAddArticle = async (e) => {
     e.preventDefault();
     if (!newTitle.trim() || !newText.trim()) return;
-
-    setAdding(true);
-
+    setAddingArticle(true);
     const created = await mockApi.addArticle(newTitle.trim(), newText.trim());
-    setArticles(prev => [created, ...prev]);
-
+    setArticles((prev) => [created, ...prev]);
     setNewTitle("");
     setNewText("");
-    setAdding(false);
-  };
-
-  const handleAddComment = (id) => {
-    setArticles(prev =>
-      prev.map(a =>
-        a.articleId === id ? { ...a, commentsCount: a.commentsCount + 1 } : a
-      )
-    );
-  };
-
-  const handleDeleteComment = (id) => {
-    setArticles(prev =>
-      prev.map(a =>
-        a.articleId === id
-          ? { ...a, commentsCount: Math.max(0, a.commentsCount - 1) }
-          : a
-      )
-    );
+    setAddingArticle(false);
   };
 
   return (
-    <div className="container">
-      <h1>Компании</h1>
+    <div className={cx("container")}>
+      <h1 className={cx("title")}>Компании</h1>
 
-      <form className="add-form" onSubmit={addArticle}>
-        <input
-          placeholder="Заголовок"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-        />
-        <input
-          placeholder="Текст"
-          value={newText}
-          onChange={(e) => setNewText(e.target.value)}
-        />
+      <section className={cx("addForm")}>
+        <h3>Добавить карточку</h3>
+        <form onSubmit={handleAddArticle} className={cx("formRow")}>
+          <input className={cx("inputTitle")} placeholder="Заголовок" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+          <input className={cx("inputText")} placeholder="Текст карточки" value={newText} onChange={(e) => setNewText(e.target.value)} />
+          <button className={cx("btn")} type="submit" disabled={addingArticle}>
+            {addingArticle ? "Добавление..." : "Добавить карточку"}
+          </button>
+        </form>
+      </section>
 
-        <button className="btn" disabled={adding}>
-          {adding ? "Добавление..." : "Добавить карточку"}
-        </button>
-      </form>
-
-      {loading ? (
-        <div>Загрузка карточек...</div>
-      ) : (
-        articles.map(a => (
-          <Card
-            key={a.articleId}
-            article={a}
-            onAddComment={handleAddComment}
-            onDeleteComment={handleDeleteComment}
-          />
-        ))
-      )}
+      <section className={cx("list")}>
+        {loadingArticles ? (
+          <div className={cx("loading")}>Загрузка карточек...</div>
+        ) : (
+          articles.map((article) => (
+            <Card
+              key={article.articleId}
+              article={article}
+              onAddComment={handleAddComment}
+              onDeleteComment={handleDeleteComment}
+            />
+          ))
+        )}
+      </section>
     </div>
   );
 }
-
-export default App;

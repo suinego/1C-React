@@ -1,0 +1,68 @@
+@import "../../styles/_variables";
+@import "../../styles/_mixins";
+
+.card {
+  @include card-base;
+
+  &.liked {
+    background-color: #f8f9ff;
+    border: 1px solid $brand;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 18px;
+    color: $text;
+  }
+
+  .text {
+    margin: 8px 0 12px;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .counts {
+      .likes { margin-right: 12px; font-size: 14px; color: $text-muted; }
+      .commentsCount { font-size: 14px; color: $text-muted; }
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      .btn {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px 12px;
+        cursor: pointer;
+
+        &.primary {
+          background-color: $brand;
+          color: #fff;
+          border: none;
+        }
+      }
+    }
+  }
+
+  .commentsWrap {
+    margin-top: 12px;
+    border-top: 1px solid #f1f1f1;
+    padding-top: 12px;
+    text-align: left;
+  }
+
+  .loading { color: $text-muted; }
+}
+
+@media (max-width: $bp-sm) {
+  .card {
+    padding: 12px;
+    .title { font-size: 16px; }
+  }
+}

@@ -1,0 +1,67 @@
+@import "./styles/_variables";
+@import "./styles/_mixins";
+
+.container {
+  max-width: 800px;
+  margin: 36px auto;
+  padding: 0 16px;
+  @include font-setup(15px);
+}
+
+.title {
+  text-align: center;
+  margin: 0 0 18px;
+  font-size: 24px;
+  color: $text;
+}
+
+.addForm {
+  margin: 18px 0 24px;
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: $radius;
+
+  h3 { margin-top: 0; }
+}
+
+.formRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .inputTitle {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    flex: 0 0 220px;
+  }
+  .inputText {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    flex: 1;
+  }
+  .btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: $brand;
+    color: #fff;
+    cursor: pointer;
+  }
+}
+
+.list {
+  margin-top: 8px;
+}
+
+.loading {
+  text-align: center;
+  color: $text-muted;
+}
+
+.footer {
+  margin-top: 28px;
+  text-align: center;
+  color: #999;
+}
