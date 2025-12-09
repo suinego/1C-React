@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Comments from "../Comments/Comments";
-import { mockApi } from "../../api/mockApi";
+import { updateArticle } from "../../store/thunks/articlesThunks";
+import { fetchComments } from "../../store/thunks/commentsThunks";
 import styles from "./Card.module.scss";
 import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
 
-const Card = ({ article, onAddComment, onDeleteComment, onUpdate }) => {
+const Card = ({ article }) => {
+  const dispatch = useDispatch();
+  const commentsData = useSelector((state) => state.comments.byArticleId[article.articleId] || { items: [], loading: false });
   const [likes, setLikes] = useState(article.currentLikes);
   const [liked, setLiked] = useState(false);
-
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const [loadingComments, setLoadingComments] = useState(false);
-  const [comments, setComments] = useState(null);
-
   const [editing, setEditing] = useState(false);
   const [editingTitle, setEditingTitle] = useState(article.title);
   const [editingText, setEditingText] = useState(article.text);
@@ -29,27 +29,14 @@ const Card = ({ article, onAddComment, onDeleteComment, onUpdate }) => {
     setLiked(!liked);
   };
 
-  const openComments = async () => {
-    if (!comments) {
-      setLoadingComments(true);
-      const fetched = await mockApi.fetchComments(article.articleId);
-      setComments(fetched);
-      setLoadingComments(false);
+  const openComments = () => {
+    if (!commentsData.items || commentsData.items.length === 0) {
+      dispatch(fetchComments(article.articleId));
     }
     setCommentsOpen(true);
   };
 
   const closeComments = () => setCommentsOpen(false);
-
-  const handleAddComment = (created) => {
-    setComments((prev) => [created, ...(prev || [])]);
-    onAddComment(article.articleId);
-  };
-
-  const handleDelete = (commentId) => {
-    setComments((prev) => prev.filter((c) => c.id !== commentId));
-    onDeleteComment(article.articleId);
-  };
 
   const handleStartEdit = () => {
     setEditing(true);
@@ -57,16 +44,14 @@ const Card = ({ article, onAddComment, onDeleteComment, onUpdate }) => {
     setEditingText(article.text);
   };
 
-  const handleSaveEdit = async () => {
-    if (!editingTitle.trim() || !editingText.trim()) return;
-    setSaving(true);
-    const updated = await mockApi.updateArticle(article.articleId, editingTitle.trim(), editingText.trim());
-    if (updated) {
-      setEditing(false);
-      onUpdate(updated);
-    }
-    setSaving(false);
-  };
+const handleSaveEdit = async () => {
+  if (!editingTitle.trim() || !editingText.trim()) return;
+  setSaving(true);
+  
+  await dispatch(updateArticle(article.articleId, editingTitle.trim(), editingText.trim()));
+  setEditing(false);
+  setSaving(false);
+};
 
   const handleCancelEdit = () => {
     setEditing(false);
@@ -154,14 +139,11 @@ const Card = ({ article, onAddComment, onDeleteComment, onUpdate }) => {
 
       {commentsOpen && (
         <div className={cx("commentsWrap")}>
-          {loadingComments ? (
+          {commentsData.loading ? (
             <div className={cx("loading")}>Загрузка комментариев...</div>
           ) : (
             <Comments
               articleId={article.articleId}
-              comments={comments || []}
-              onAdd={(created) => handleAddComment(created)}
-              onDelete={(id) => handleDelete(id)}
             />
           )}
         </div>

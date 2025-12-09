@@ -1,45 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { mockApi } from "../../api/mockApi";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addComment, deleteComment, updateComment, likeComment } from "../../store/thunks/commentsThunks";
+import { setCommentsSortBy } from "../../store/commentsSlice";
 import styles from "./Comments.module.scss";
 import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
 
-const Comments = ({ articleId, comments: initial = [], onAdd, onDelete }) => {
-  const [items, setItems] = useState(initial);
+const Comments = ({ articleId }) => {
+  const dispatch = useDispatch();
+  const commentsData = useSelector((state) => state.comments.byArticleId[articleId] || { items: [] });
+  const { sortBy, adding } = useSelector((state) => state.comments);
+  const items = commentsData.items || [];
+
   const [newAuthor, setNewAuthor] = useState("");
   const [newText, setNewText] = useState("");
-  const [adding, setAdding] = useState(false);
-  const [sortBy, setSortBy] = useState("date");
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-  useEffect(() => {
-    setItems(initial);
-  }, [initial]);
-
-  const handleAdd = async (e) => {
+  const handleAdd = (e) => {
     e.preventDefault();
     if (!newAuthor.trim() || !newText.trim()) return;
-    setAdding(true);
-    const created = await mockApi.addComment(articleId, newAuthor.trim(), newText.trim());
-    setItems((prev) => [created, ...prev]);
+    dispatch(addComment(articleId, newAuthor.trim(), newText.trim()));
     setNewAuthor("");
     setNewText("");
-    setAdding(false);
-    onAdd(created);
   };
 
-  const handleDelete = async (id) => {
-    await mockApi.deleteComment(id);
-    setItems((prev) => prev.filter((c) => c.id !== id));
-    onDelete(id);
+  const handleDelete = (id) => {
+    dispatch(deleteComment(id, articleId));
   };
 
-  const handleLike = async (id) => {
-    const updated = await mockApi.likeComment(id);
-    if (updated) {
-      setItems((prev) => prev.map((c) => (c.id === id ? updated : c)));
-    }
+  const handleLike = (id) => {
+    dispatch(likeComment(id));
   };
 
   const handleEdit = (comment) => {
@@ -47,14 +38,11 @@ const Comments = ({ articleId, comments: initial = [], onAdd, onDelete }) => {
     setEditingText(comment.text);
   };
 
-  const handleSaveEdit = async (id) => {
+  const handleSaveEdit = (id) => {
     if (!editingText.trim()) return;
-    const updated = await mockApi.updateComment(id, editingText.trim());
-    if (updated) {
-      setItems((prev) => prev.map((c) => (c.id === id ? updated : c)));
-      setEditingId(null);
-      setEditingText("");
-    }
+    dispatch(updateComment(id, editingText.trim()));
+    setEditingId(null);
+    setEditingText("");
   };
 
   const handleCancelEdit = () => {
@@ -91,13 +79,13 @@ const Comments = ({ articleId, comments: initial = [], onAdd, onDelete }) => {
         <div className={cx("sortControls")}>
           <button
             className={cx("sortBtn", { active: sortBy === "date" })}
-            onClick={() => setSortBy("date")}
+            onClick={() => dispatch(setCommentsSortBy("date"))}
           >
             По дате
           </button>
           <button
             className={cx("sortBtn", { active: sortBy === "likes" })}
-            onClick={() => setSortBy("likes")}
+            onClick={() => dispatch(setCommentsSortBy("likes"))}
           >
             По лайкам
           </button>

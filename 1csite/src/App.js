@@ -1,51 +1,35 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Card from "./components/Card/Card";
-import { mockApi } from "./api/mockApi";
+import { fetchArticles, addArticle } from "./store/thunks/articlesThunks";
+import { setSortBy as setArticlesSortBy } from "./store/articlesSlice";
 
 import styles from "./App.module.scss";
 import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
 
 export default function App() {
-  const [articles, setArticles] = useState([]);
-  const [loadingArticles, setLoadingArticles] = useState(true);
-  const [sortBy, setSortBy] = useState("date");
+  const dispatch = useDispatch();
+  const articlesState = useSelector((state) => state.articles);
+  const { items: articles = [], loading: loadingArticles = false, sortBy = 'date', adding: addingArticle = false } = articlesState || {};
 
-  useEffect(() => {
-    let mounted = true;
-    mockApi.fetchArticles().then((data) => {
-      if (!mounted) return;
-      setArticles(data);
-      setLoadingArticles(false);
-    });
-    return () => (mounted = false);
-  }, []);
-
-  const handleAddComment = (articleId) => {
-    setArticles((prev) => prev.map((a) => (a.articleId === articleId ? { ...a, commentsCount: a.commentsCount + 1 } : a)));
-  };
-
-  const handleDeleteComment = (articleId) => {
-    setArticles((prev) => prev.map((a) => (a.articleId === articleId ? { ...a, commentsCount: Math.max(0, a.commentsCount - 1) } : a)));
-  };
-
-  const [addingArticle, setAddingArticle] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newText, setNewText] = useState("");
 
-  const handleAddArticle = async (e) => {
+  useEffect(() => {
+    dispatch(fetchArticles());
+  }, [dispatch]);
+
+  const handleAddArticle = (e) => {
     e.preventDefault();
     if (!newTitle.trim() || !newText.trim()) return;
-    setAddingArticle(true);
-    const created = await mockApi.addArticle(newTitle.trim(), newText.trim());
-    setArticles((prev) => [created, ...prev]);
+    dispatch(addArticle(newTitle.trim(), newText.trim()));
     setNewTitle("");
     setNewText("");
-    setAddingArticle(false);
   };
 
-  const handleUpdateArticle = (updated) => {
-    setArticles((prev) => prev.map((a) => (a.articleId === updated.articleId ? updated : a)));
+  const handleSortChange = (newSortBy) => {
+    dispatch(setArticlesSortBy(newSortBy));
   };
 
   const sortedArticles = [...articles].sort((a, b) => {
@@ -80,13 +64,13 @@ export default function App() {
           <div className={cx("sortControls")}>
             <button
               className={cx("sortBtn", { active: sortBy === "date" })}
-              onClick={() => setSortBy("date")}
+              onClick={() => handleSortChange("date")}
             >
               По дате
             </button>
             <button
               className={cx("sortBtn", { active: sortBy === "likes" })}
-              onClick={() => setSortBy("likes")}
+              onClick={() => handleSortChange("likes")}
             >
               По лайкам
             </button>
@@ -102,9 +86,6 @@ export default function App() {
             <Card
               key={article.articleId}
               article={article}
-              onAddComment={handleAddComment}
-              onDeleteComment={handleDeleteComment}
-              onUpdate={handleUpdateArticle}
             />
           ))
         )}
