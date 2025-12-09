@@ -31,6 +31,8 @@ export const mockApi = {
           articleId,
           author,
           text,
+          createdAt: new Date().toISOString(),
+          likes: 0,
         };
         mockComments = [newComment, ...mockComments];
         res({ ...newComment });
@@ -55,10 +57,54 @@ export const mockApi = {
           title,
           text,
           currentLikes: 0,
-          commentsCount: 0
+          commentsCount: 0,
+          createdAt: new Date().toISOString(),
         };
         mockArticles.unshift(newArticle);
         res({ ...newArticle });
+      }, FAKE_DELAY);
+    });
+  },
+
+  updateComment(commentId, text) {
+    return new Promise((res) => {
+      setTimeout(() => {
+        const comment = mockComments.find(c => c.id === commentId);
+        if (comment) {
+          comment.text = text;
+          res({ ...comment });
+        } else {
+          res(null);
+        }
+      }, FAKE_DELAY);
+    });
+  },
+
+  likeComment(commentId) {
+    return new Promise((res) => {
+      setTimeout(() => {
+        const comment = mockComments.find(c => c.id === commentId);
+        if (comment) {
+          comment.likes = (comment.likes || 0) + 1;
+          res({ ...comment });
+        } else {
+          res(null);
+        }
+      }, FAKE_DELAY);
+    });
+  },
+
+  updateArticle(articleId, title, text) {
+    return new Promise((res) => {
+      setTimeout(() => {
+        const article = mockArticles.find(a => a.articleId === articleId);
+        if (article) {
+          if (title !== undefined) article.title = title;
+          if (text !== undefined) article.text = text;
+          res({ ...article });
+        } else {
+          res(null);
+        }
       }, FAKE_DELAY);
     });
   },

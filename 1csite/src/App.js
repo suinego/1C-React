@@ -9,6 +9,7 @@ const cx = classNames.bind(styles);
 export default function App() {
   const [articles, setArticles] = useState([]);
   const [loadingArticles, setLoadingArticles] = useState(true);
+  const [sortBy, setSortBy] = useState("date");
 
   useEffect(() => {
     let mounted = true;
@@ -43,6 +44,21 @@ export default function App() {
     setAddingArticle(false);
   };
 
+  const handleUpdateArticle = (updated) => {
+    setArticles((prev) => prev.map((a) => (a.articleId === updated.articleId ? updated : a)));
+  };
+
+  const sortedArticles = [...articles].sort((a, b) => {
+    if (sortBy === "date") {
+      const dateA = new Date(a.createdAt || 0);
+      const dateB = new Date(b.createdAt || 0);
+      return dateB - dateA;
+    } else if (sortBy === "likes") {
+      return (b.currentLikes || 0) - (a.currentLikes || 0);
+    }
+    return 0;
+  });
+
   return (
     <div className={cx("container")}>
       <h1 className={cx("title")}>Компании</h1>
@@ -58,16 +74,37 @@ export default function App() {
         </form>
       </section>
 
+      {!loadingArticles && articles.length > 0 && (
+        <section className={cx("sortSection")}>
+          <h3>Сортировка карточек</h3>
+          <div className={cx("sortControls")}>
+            <button
+              className={cx("sortBtn", { active: sortBy === "date" })}
+              onClick={() => setSortBy("date")}
+            >
+              По дате
+            </button>
+            <button
+              className={cx("sortBtn", { active: sortBy === "likes" })}
+              onClick={() => setSortBy("likes")}
+            >
+              По лайкам
+            </button>
+          </div>
+        </section>
+      )}
+
       <section className={cx("list")}>
         {loadingArticles ? (
           <div className={cx("loading")}>Загрузка карточек...</div>
         ) : (
-          articles.map((article) => (
+          sortedArticles.map((article) => (
             <Card
               key={article.articleId}
               article={article}
               onAddComment={handleAddComment}
               onDeleteComment={handleDeleteComment}
+              onUpdate={handleUpdateArticle}
             />
           ))
         )}

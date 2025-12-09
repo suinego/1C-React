@@ -1,32 +1,50 @@
 [
   {
+    "id": 1,
     "author": "Sofa",
     "articleId": 33,
-    "text": "Comment comment comment"
+    "text": "Comment comment comment",
+    "createdAt": "2024-01-12",
+    "likes": 3
   },
   {
+    "id": 2,
     "author": "Ivan",
     "articleId": 5,
-    "text": "Random text from Ivan"
+    "text": "Random text from Ivan",
+    "createdAt": "2024-01-14",
+    "likes": 1
   },
   {
+    "id": 3,
     "author": "Oleg",
     "articleId": 5,
-    "text": "Long text long text long text long text long text long text"
+    "text": "Long text long text long text long text long text long text",
+    "createdAt": "2024-01-14",
+    "likes": 5
   },
   {
+    "id": 4,
     "author": "Roman",
     "articleId": 33,
-    "text": "Short text"
+    "text": "Short text",
+    "createdAt": "2024-01-12",
+    "likes": 2
   },
   {
+    "id": 5,
     "author": "Bob",
     "articleId": 16,
-    "text": "Short text from Bob"
+    "text": "Short text from Bob",
+    "createdAt": "2024-01-11",
+    "likes": 0
   },
   {
+    "id": 6,
     "author": "Roman",
     "articleId": 11,
-    "text": "Short text from Frank + random random random"
+    "text": "Short text from Frank + random random random",
+    "createdAt": "2024-01-15",
+    "likes": 4
   }
 ]

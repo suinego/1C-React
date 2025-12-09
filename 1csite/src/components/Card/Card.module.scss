@@ -21,6 +21,64 @@
     color: #444;
   }
 
+  .date {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .editForm {
+    margin-bottom: 12px;
+    .editTitle {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .editText {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 8px;
+      font-family: inherit;
+    }
+    .editControls {
+      display: flex;
+      gap: 8px;
+      .saveBtn {
+        background-color: $brand;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+      .cancelBtn {
+        background: transparent;
+        border: 1px solid #ddd;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
   .meta {
     display: flex;
     justify-content: space-between;
@@ -40,11 +98,17 @@
         border-radius: 6px;
         padding: 6px 12px;
         cursor: pointer;
+        font-size: 13px;
 
         &.primary {
           background-color: $brand;
           color: #fff;
           border: none;
+        }
+
+        &.editBtn {
+          border-color: $brand;
+          color: $brand;
         }
       }
     }

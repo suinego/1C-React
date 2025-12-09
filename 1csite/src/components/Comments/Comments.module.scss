@@ -4,6 +4,31 @@
 .root {
   .heading { margin-bottom: 8px; font-weight: 600; }
   .empty { margin-bottom: 8px; color: $text-muted; }
+  
+  .sortControls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    .sortBtn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      &.active {
+        background-color: $brand;
+        color: #fff;
+        border: none;
+      }
+      &:hover {
+        background-color: #f5f5f5;
+      }
+      &.active:hover {
+        background-color: $brand;
+      }
+    }
+  }
 
   .list {
     list-style: none;
@@ -18,11 +43,74 @@
       align-items: flex-start;
 
       .body {
+        flex: 1;
         .author { font-size: 14px; font-weight: 600; }
+        .date { 
+          font-size: 12px; 
+          color: #666; 
+          margin-top: 4px; 
+          margin-bottom: 4px;
+          font-style: italic;
+        }
         .text { font-size: 13px; color: #333; margin-top: 4px; }
+        .likes {
+          margin-top: 6px;
+          .likeBtn {
+            background: transparent;
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            &:hover {
+              background: #f5f5f5;
+            }
+          }
+        }
+        .editForm {
+          margin-top: 4px;
+          .editInput {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+          }
+          .editControls {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            .saveBtn, .cancelBtn {
+              padding: 4px 8px;
+              border-radius: 4px;
+              border: 1px solid #ddd;
+              cursor: pointer;
+              font-size: 12px;
+            }
+            .saveBtn {
+              background-color: $brand;
+              color: #fff;
+              border: none;
+            }
+            .cancelBtn {
+              background: transparent;
+            }
+          }
+        }
       }
 
       .controls {
+        display: flex;
+        gap: 4px;
+        .editBtn {
+          background: transparent;
+          border: 1px solid $brand;
+          color: $brand;
+          padding: 6px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 12px;
+        }
         .deleteBtn {
           background: transparent;
           border: 1px solid $error;
@@ -30,6 +118,7 @@
           padding: 6px 8px;
           border-radius: 6px;
           cursor: pointer;
+          font-size: 12px;
         }
       }
     }

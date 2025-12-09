@@ -51,6 +51,42 @@
   }
 }
 
+.sortSection {
+  margin: 18px 0 24px;
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: $radius;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  .sortControls {
+    display: flex;
+    gap: 8px;
+    .sortBtn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      &.active {
+        background-color: $brand;
+        color: #fff;
+        border: none;
+      }
+      &:hover {
+        background-color: #f5f5f5;
+      }
+      &.active:hover {
+        background-color: $brand;
+      }
+    }
+  }
+}
+
 .list {
   margin-top: 8px;
 }
