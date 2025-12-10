@@ -97,11 +97,15 @@ export const mockApi = {
   updateArticle(articleId, title, text) {
     return new Promise((res) => {
       setTimeout(() => {
-        const article = mockArticles.find(a => a.articleId === articleId);
-        if (article) {
-          if (title !== undefined) article.title = title;
-          if (text !== undefined) article.text = text;
-          res({ ...article });
+        const articleIndex = mockArticles.findIndex(a => a.articleId === articleId);
+        if (articleIndex !== -1) {
+          const updatedArticle = {
+            ...mockArticles[articleIndex],
+            title: title !== undefined ? title : mockArticles[articleIndex].title,
+            text: text !== undefined ? text : mockArticles[articleIndex].text,
+          };
+          mockArticles[articleIndex] = updatedArticle;
+          res(updatedArticle);
         } else {
           res(null);
         }
