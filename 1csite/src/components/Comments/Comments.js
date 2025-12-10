@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment, deleteComment, updateComment, likeComment } from "../../store/thunks/commentsThunks";
 import { setCommentsSortBy } from "../../store/commentsSlice";
@@ -17,38 +17,42 @@ const Comments = ({ articleId }) => {
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-  const handleAdd = (e) => {
+  const handleAdd = useCallback((e) => {
     e.preventDefault();
     if (!newAuthor.trim() || !newText.trim()) return;
     dispatch(addComment(articleId, newAuthor.trim(), newText.trim()));
     setNewAuthor("");
     setNewText("");
-  };
+  }, [newAuthor, newText, articleId, dispatch]);
 
-  const handleDelete = (id) => {
+  const handleDelete = useCallback((id) => {
     dispatch(deleteComment(id, articleId));
-  };
+  }, [articleId, dispatch]);
 
-  const handleLike = (id) => {
+  const handleLike = useCallback((id) => {
     dispatch(likeComment(id));
-  };
+  }, [dispatch]);
 
-  const handleEdit = (comment) => {
+  const handleEdit = useCallback((comment) => {
     setEditingId(comment.id);
     setEditingText(comment.text);
-  };
+  }, []);
 
-  const handleSaveEdit = (id) => {
+  const handleSaveEdit = useCallback((id) => {
     if (!editingText.trim()) return;
     dispatch(updateComment(id, editingText.trim()));
     setEditingId(null);
     setEditingText("");
-  };
+  }, [editingText, dispatch]);
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setEditingId(null);
     setEditingText("");
-  };
+  }, []);
+
+  const handleSortChange = useCallback((newSortBy) => {
+    dispatch(setCommentsSortBy(newSortBy));
+  }, [dispatch]);
 
   const sortedItems = [...items].sort((a, b) => {
     if (sortBy === "date") {
@@ -61,7 +65,7 @@ const Comments = ({ articleId }) => {
     return 0;
   });
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toLocaleDateString("ru-RU", {
@@ -69,7 +73,7 @@ const Comments = ({ articleId }) => {
       month: "2-digit",
       day: "2-digit",
     });
-  };
+  }, []);
 
   return (
     <div className={cx("root")}>
@@ -79,13 +83,13 @@ const Comments = ({ articleId }) => {
         <div className={cx("sortControls")}>
           <button
             className={cx("sortBtn", { active: sortBy === "date" })}
-            onClick={() => dispatch(setCommentsSortBy("date"))}
+            onClick={() => handleSortChange("date")}
           >
             По дате
           </button>
           <button
             className={cx("sortBtn", { active: sortBy === "likes" })}
-            onClick={() => dispatch(setCommentsSortBy("likes"))}
+            onClick={() => handleSortChange("likes")}
           >
             По лайкам
           </button>

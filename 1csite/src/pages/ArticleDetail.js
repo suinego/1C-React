@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Comments from "../components/Comments/Comments";
@@ -44,25 +44,42 @@ export default function ArticleDetailPage() {
     }
   }, [article]);
 
+  useEffect(() => {
+    if (article) {
+      const visitTime = new Date().toISOString();
+      console.log(
+        `%cПользователь посетил статью: "${article.title}" (ID: ${numArticleId})`,
+        "color: #0066cc; font-weight: bold; font-size: 14px;"
+      );
+      console.table({
+        visitTime,
+        articleId: numArticleId,
+        title: article.title,
+        commentsCount: article.commentsCount,
+        likes: article.currentLikes,
+      });
+    }
+  }, [numArticleId, article]);
+
   const toggleLike = () => {
     setLikes(liked ? likes - 1 : likes + 1);
     setLiked(!liked);
   };
 
-  const openComments = () => {
+  const openComments = useCallback(() => {
     if (!commentsData.items || commentsData.items.length === 0) {
       dispatch(fetchComments(numArticleId));
     }
     setCommentsOpen(true);
-  };
+  }, [commentsData.items, dispatch, numArticleId]);
 
-  const closeComments = () => setCommentsOpen(false);
+  const closeComments = useCallback(() => setCommentsOpen(false), []);
 
-  const handleStartEdit = () => {
+  const handleStartEdit = useCallback(() => {
     setEditing(true);
-  };
+  }, []);
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = useCallback(async () => {
     if (!editingTitle.trim() || !editingText.trim()) return;
     setSaving(true);
 
@@ -71,13 +88,13 @@ export default function ArticleDetailPage() {
     );
     setEditing(false);
     setSaving(false);
-  };
+  }, [editingTitle, editingText, numArticleId, dispatch]);
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setEditing(false);
     setEditingTitle(article?.title || "");
     setEditingText(article?.text || "");
-  };
+  }, [article?.title, article?.text]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "";

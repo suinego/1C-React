@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ArticleCard from "../components/ArticleCard/ArticleCard";
@@ -9,29 +9,51 @@ import classNames from "classnames/bind";
 
 const cx = classNames.bind(styles);
 
+const formReducer = (state, action) => {
+  switch (action.type) {
+    case "NAZNACHIT_TITLE":
+      return { ...state, newTitle: action.payload };
+    case "NAZNACHIT_TEXT":
+      return { ...state, newText: action.payload };
+    case "RESET":
+      return { newTitle: "", newText: "" };
+    default:
+      return state;
+  }
+};
+
 export default function ArticlesPage() {
   const dispatch = useDispatch();
   const articlesState = useSelector((state) => state.articles);
   const { items: articles = [], loading: loadingArticles = false, sortBy = 'date', adding: addingArticle = false } = articlesState || {};
 
-  const [newTitle, setNewTitle] = useState("");
-  const [newText, setNewText] = useState("");
+  const [formState, formDispatch] = useReducer(formReducer, {
+    newTitle: "",
+    newText: "",
+  });
 
   useEffect(() => {
     dispatch(fetchArticles());
   }, [dispatch]);
 
-  const handleAddArticle = (e) => {
+  const handleAddArticle = useCallback((e) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newText.trim()) return;
-    dispatch(addArticle(newTitle.trim(), newText.trim()));
-    setNewTitle("");
-    setNewText("");
-  };
+    if (!formState.newTitle.trim() || !formState.newText.trim()) return;
+    dispatch(addArticle(formState.newTitle.trim(), formState.newText.trim()));
+    formDispatch({ type: "RESET" });
+  }, [formState.newTitle, formState.newText, dispatch]);
 
-  const handleSortChange = (newSortBy) => {
+  const handleSortChange = useCallback((newSortBy) => {
     dispatch(setArticlesSortBy(newSortBy));
-  };
+  }, [dispatch]);
+
+  const handleTitleChange = useCallback((e) => {
+    formDispatch({ type: "NAZNACHIT_TITLE", payload: e.target.value });
+  }, []);
+
+  const handleTextChange = useCallback((e) => {
+    formDispatch({ type: "NAZNACHIT_TEXT", payload: e.target.value });
+  }, []);
 
   const sortedArticles = [...articles].sort((a, b) => {
     if (sortBy === "date") {
@@ -54,14 +76,14 @@ export default function ArticlesPage() {
           <input
             className={cx("inputTitle")}
             placeholder="Заголовок"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
+            value={formState.newTitle}
+            onChange={handleTitleChange}
           />
           <input
             className={cx("inputText")}
             placeholder="Текст карточки"
-            value={newText}
-            onChange={(e) => setNewText(e.target.value)}
+            value={formState.newText}
+            onChange={handleTextChange}
           />
           <button className={cx("btn")} type="submit" disabled={addingArticle}>
             {addingArticle ? "Добавление..." : "Добавить карточку"}

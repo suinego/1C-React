@@ -15,6 +15,8 @@ export const fetchArticles = () => {
       const articles = await mockApi.fetchArticles();
       dispatch(setArticles(articles));
     } catch (error) {
+      const errorMsg = `ошибка загрузки статьей: ${error.message}`;
+      console.error(`[${new Date().toISOString()}] ${errorMsg}`);
       dispatch(setError(error.message));
     }
   };
@@ -23,17 +25,31 @@ export const fetchArticles = () => {
 export const addArticle = (title, text) => {
   return async (dispatch) => {
     dispatch(startAdding());
-    const article = await mockApi.addArticle(title, text);
-    dispatch(addArticleLocal(article));
+    try {
+      const article = await mockApi.addArticle(title, text);
+      dispatch(addArticleLocal(article));
+      console.info(`[${new Date().toISOString()}] Статья добавлена`);
+    } catch (error) {
+      const errorMsg = `Не добавили статью: ${error.message}`;
+      console.error(`[${new Date().toISOString()}] ${errorMsg}`);
+      dispatch(setError(error.message));
+    }
   };
 };
 
 export const updateArticle = (articleId, title, text) => {
   return async (dispatch) => {
-    const article = await mockApi.updateArticle(articleId, title, text);
-    if (article) {
-      dispatch(updateArticleLocal(article));
-      return article;
+    try {
+      const article = await mockApi.updateArticle(articleId, title, text);
+      if (article) {
+        dispatch(updateArticleLocal(article));
+        console.info(`[${new Date().toISOString()}] Статья ${articleId} обновлена`);
+        return article;
+      }
+    } catch (error) {
+      const errorMsg = `Failed to update article ${articleId}: ${error.message}`;
+      console.error(`[${new Date().toISOString()}] ${errorMsg}`);
+      dispatch(setError(error.message));
     }
   };
 };

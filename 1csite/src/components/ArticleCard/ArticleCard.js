@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import styles from "./ArticleCard.module.scss";
 import classNames from "classnames/bind";
 
@@ -8,21 +8,21 @@ const ArticleCard = ({ article }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(article.currentLikes);
 
-  const toggleLike = (e) => {
+  const toggleLike = useCallback((e) => {
     e.stopPropagation();
     e.preventDefault();
-    setLikes(liked ? likes - 1 : likes + 1);
-    setLiked(!liked);
-  };
+    setLikes((prevLikes) => liked ? prevLikes - 1 : prevLikes + 1);
+    setLiked((prevLiked) => !prevLiked);
+  }, [liked]);
 
-  const truncateText = (text, maxLength = 100) => {
+  const truncateText = useCallback((text, maxLength = 100) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + "...";
     }
     return text;
-  };
+  }, []);
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toLocaleDateString("ru-RU", {
@@ -30,7 +30,7 @@ const ArticleCard = ({ article }) => {
       month: "2-digit",
       day: "2-digit",
     });
-  };
+  }, []);
 
   return (
     <div className={cx("card", { liked: liked })}>
