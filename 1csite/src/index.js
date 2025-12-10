@@ -14,6 +14,7 @@ root.render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<ArticlesPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/articles/:articleId" element={<ArticleDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
