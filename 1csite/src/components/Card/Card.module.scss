@@ -1,0 +1,132 @@
+@import "../../styles/_variables";
+@import "../../styles/_mixins";
+
+.card {
+  @include card-base;
+
+  &.liked {
+    background-color: #f8f9ff;
+    border: 1px solid $brand;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 18px;
+    color: $text;
+  }
+
+  .text {
+    margin: 8px 0 12px;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .date {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .editForm {
+    margin-bottom: 12px;
+    .editTitle {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .editText {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 8px;
+      font-family: inherit;
+    }
+    .editControls {
+      display: flex;
+      gap: 8px;
+      .saveBtn {
+        background-color: $brand;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+      .cancelBtn {
+        background: transparent;
+        border: 1px solid #ddd;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .counts {
+      .likes { margin-right: 12px; font-size: 14px; color: $text-muted; }
+      .commentsCount { font-size: 14px; color: $text-muted; }
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      .btn {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 13px;
+
+        &.primary {
+          background-color: $brand;
+          color: #fff;
+          border: none;
+        }
+
+        &.editBtn {
+          border-color: $brand;
+          color: $brand;
+        }
+      }
+    }
+  }
+
+  .commentsWrap {
+    margin-top: 12px;
+    border-top: 1px solid #f1f1f1;
+    padding-top: 12px;
+    text-align: left;
+  }
+
+  .loading { color: $text-muted; }
+}
+
+@media (max-width: $bp-sm) {
+  .card {
+    padding: 12px;
+    .title { font-size: 16px; }
+  }
+}

@@ -1,0 +1,23 @@
+@import "./_variables";
+@import "./_mixins";
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  @include font-setup(16px, 400, 1.4);
+  margin: 0;
+  background: #fafafa;
+  color: $text;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 900px;
+  margin: 36px auto;
+  padding: 0 16px;
+}
+
+@media (max-width: $bp-md) {
+  .container { padding: 0 12px; margin: 20px auto; }
+}
