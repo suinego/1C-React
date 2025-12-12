@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment, deleteComment, updateComment, likeComment } from "../../store/thunks/commentsThunks";
 import { setCommentsSortBy } from "../../store/commentsSlice";
+import authApi from "../../api/authApi";
 import styles from "./Comments.module.scss";
 import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
@@ -19,11 +20,13 @@ const Comments = ({ articleId }) => {
 
   const handleAdd = useCallback((e) => {
     e.preventDefault();
-    if (!newAuthor.trim() || !newText.trim()) return;
-    dispatch(addComment(articleId, newAuthor.trim(), newText.trim()));
+    if (!newText.trim()) return;
+    const current = authApi.getAuth();
+    const author = current ? current.username : "Аноним";
+    dispatch(addComment(articleId, author, newText.trim()));
     setNewAuthor("");
     setNewText("");
-  }, [newAuthor, newText, articleId, dispatch]);
+  }, [newText, articleId, dispatch]);
 
   const handleDelete = useCallback((id) => {
     dispatch(deleteComment(id, articleId));

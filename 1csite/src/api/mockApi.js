@@ -79,13 +79,14 @@ export const mockApi = {
     );
   },
 
-  addArticle(title, text) {
+  addArticle(title, text, author) {
     return withErrorHandling(
       new Promise((res) => {
         setTimeout(() => {
           const newArticle = {
             articleId: Date.now(),
             title,
+            author: author || "Аноним",
             text,
             currentLikes: 0,
             commentsCount: 0,

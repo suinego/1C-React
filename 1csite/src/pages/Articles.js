@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer, useCallback } from "react";
+import React, { useEffect, useReducer, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import authApi from "../api/authApi";
 import ArticleCard from "../components/ArticleCard/ArticleCard";
 import { fetchArticles, addArticle } from "../store/thunks/articlesThunks";
 import { setSortBy as setArticlesSortBy } from "../store/articlesSlice";
@@ -32,6 +33,33 @@ export default function ArticlesPage() {
     newText: "",
   });
 
+  const [authUser, setAuthUser] = useState(() => {
+    try {
+      const raw = window.localStorage.getItem("authUser");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const onStorage = () => {
+      try {
+        const raw = window.localStorage.getItem("authUser");
+        setAuthUser(raw ? JSON.parse(raw) : null);
+      } catch (e) {
+        setAuthUser(null);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    await authApi.logout();
+    setAuthUser(null);
+  }, []);
+
   useEffect(() => {
     dispatch(fetchArticles());
   }, [dispatch]);
@@ -39,9 +67,10 @@ export default function ArticlesPage() {
   const handleAddArticle = useCallback((e) => {
     e.preventDefault();
     if (!formState.newTitle.trim() || !formState.newText.trim()) return;
-    dispatch(addArticle(formState.newTitle.trim(), formState.newText.trim()));
+    const author = authUser ? authUser.username : "Аноним";
+    dispatch(addArticle(formState.newTitle.trim(), formState.newText.trim(), author));
     formDispatch({ type: "RESET" });
-  }, [formState.newTitle, formState.newText, dispatch]);
+  }, [formState.newTitle, formState.newText, dispatch, authUser]);
 
   const handleSortChange = useCallback((newSortBy) => {
     dispatch(setArticlesSortBy(newSortBy));
@@ -69,6 +98,21 @@ export default function ArticlesPage() {
   return (
     <div className={cx("container")}>
       <h1 className={cx("title")}>Компании</h1>
+
+      <div className={cx("authRow")}>
+        {authUser ? (
+          <>
+            <div className={cx("userName")}>Привет, {authUser.username}</div>
+            <button className={cx("btn", "logoutBtn")} onClick={handleLogout}>
+              Выйти
+            </button>
+          </>
+        ) : (
+          <Link to="/auth" className={cx("btn")}>
+            Войти
+          </Link>
+        )}
+      </div>
 
       <section className={cx("addForm")}>
         <h3>Добавить карточку</h3>

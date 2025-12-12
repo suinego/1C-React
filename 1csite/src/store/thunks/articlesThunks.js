@@ -22,11 +22,11 @@ export const fetchArticles = () => {
   };
 };
 
-export const addArticle = (title, text) => {
+export const addArticle = (title, text, author) => {
   return async (dispatch) => {
     dispatch(startAdding());
     try {
-      const article = await mockApi.addArticle(title, text);
+      const article = await mockApi.addArticle(title, text, author);
       dispatch(addArticleLocal(article));
       console.info(`[${new Date().toISOString()}] Статья добавлена`);
     } catch (error) {
