@@ -1,0 +1,112 @@
+.card {
+  background: linear-gradient(135deg, #fff5f9 0%, #f0e6ff 100%);
+  border: 2px solid #e8d4f8;
+  border-radius: 30px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(200, 100, 200, 0.12);
+
+  &.liked {
+    border-color: #e889ff;
+    background: linear-gradient(135deg, #ffe0f5 0%, #f0d4ff 100%);
+    box-shadow: 0 12px 28px rgba(232, 89, 255, 0.2);
+  }
+
+  &:hover {
+    box-shadow: 0 12px 32px rgba(200, 100, 200, 0.2);
+    transform: translateY(-4px);
+    border-color: #d4a8ff;
+  }
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  color: #6b1f9a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #7a5a8f;
+  margin: 0 0 12px 0;
+  height: 4.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.date {
+  color: #9d7aad;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(200, 150, 220, 0.15);
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 2px solid rgba(200, 150, 220, 0.2);
+}
+
+.counts {
+  display: flex;
+  gap: 15px;
+  font-weight: 600;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+  }
+}
+
+.likes {
+  color: #e889ff;
+}
+
+.commentsCount {
+  color: #b366ff;
+}
+
+.btn {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #e889ff 0%, #d466ff 100%);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(232, 89, 255, 0.3);
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(232, 89, 255, 0.4);
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, #ff66cc 0%, #ff3385 100%);
+    box-shadow: 0 4px 12px rgba(255, 51, 133, 0.3);
+
+    &:hover {
+      box-shadow: 0 6px 16px rgba(255, 51, 133, 0.4);
+    }
+  }
+}
